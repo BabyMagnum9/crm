@@ -22,3 +22,10 @@
    'name'=>'m_name',
    'label'=>'Отчество'
 ])
+
+@include('form._input',[
+          'name'=>'image',
+           'type'=>'file',
+             'required'=>true,
+          'label'=>'Изображение'
+      ])

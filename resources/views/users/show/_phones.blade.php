@@ -34,6 +34,8 @@ use App\Models\Users\Phone;
     Добавить телефон <i class="fa fa-fw fa-plus"></i>
 </button>
 
+
+@push('scripts')
 <script>
     $('#copy_tel').on('click',function () {
         let
@@ -54,3 +56,5 @@ use App\Models\Users\Phone;
         }
     })
 </script>
+
+    @endpush

@@ -56,6 +56,12 @@
       'label'=>'Повторение пароля'
   ])
 
+    @include('form._input',[
+          'name'=>'image',
+           'type'=>'file',
+             'required'=>true,
+          'label'=>'Изображение'
+      ])
 
     <button class="btn btn-primary">Создать</button>
     {{ Form::close() }}

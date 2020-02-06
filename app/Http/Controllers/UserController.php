@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\Users\Auth\ChangePassword;
 use App\Models\Users\Role;
 use App\Models\Users\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Artesaos\SEOTools\Facades\SEOMeta;
+use Illuminate\Support\Facades\Storage;
 
 
 class UserController extends Controller
@@ -68,6 +70,7 @@ class UserController extends Controller
             'm_name' => 'required|min:1|max:50',
             'age' => 'required|min:1|max:50',
             'email' => 'required|unique:users',
+            'image' => 'required|mimes:jpeg,jpg,png|dimensions:min_width=1000,min_height=400',
             'password' => ['required', 'string', 'min:8', 'confirmed'],
             "date_birth" => 'required|before:'.$date,
         ]);
@@ -83,11 +86,19 @@ class UserController extends Controller
         $user->setPassword($data['password']);
         $user->save();
 
+        $image = $request->file('image');
+
+        $storage = Storage::disk('public');
+        $localPath = '/users/avatars/'.md5($user->getKey()).'.jpg';
+        $storage->put($localPath, $image->get());
         if (isset($data['roles'])){
             $user->roles()->sync($data['roles']);
         }
-
-        return redirect()->route('users.index');
+        $publicPath = $storage->url($localPath);
+        $user->setImageUrl($publicPath);
+        $user->save();
+        $flashMessages = [['type' => 'success', 'text' => 'Пользователь «' . $user->getName() . '» создан']];
+        return redirect()->route('users.index')->with(compact('flashMessages'));;
 
     }
 
@@ -131,6 +142,7 @@ class UserController extends Controller
         $this->validate($request, [
             'l_name' => 'required',
             'email'=>'required|unique:users,email,'.$user->getKey(),
+            'image' => 'required|mimes:jpeg,jpg,png|dimensions:min_width=1000,min_height=400',
         ]);
 
         /**
@@ -144,9 +156,26 @@ class UserController extends Controller
 
         $user->syncPhones($frd['phones']);
 
+        $image = $request->file('image');
+        \Image::make($image)->resize(null,500,function ($constraint){
+            $constraint->aspectRatio();
+        });
+        /**
+         * @var FilesystemAdapter $storage
+         */
+        $storage = Storage::disk('public');
+        $localPath = '/users/avatars/'.md5($user->getKey()).'.jpg';
+        $storage->put($localPath, $image->get());
+
+        $publicPath = $storage->url($localPath);
+        $image=$publicPath;
+        $user->setImageUrl($publicPath);
+        $user->save();
+        dd($image);
+
         $flashMessages = [['type' => 'success', 'text' => 'Пользователь «'.$user->getName() .'» сохранен']];
 
-        return redirect()->back()->with(compact('flashMessages'));
+        return redirect()->back()->with(compact('flashMessages','$image'));
     }
 
     /**
@@ -227,6 +256,7 @@ class UserController extends Controller
         $frd = $request->only('password');
         $user->setPassword($frd['password']);
         $user->save();
+        event(new ChangePassword($user));
         $flashMessages = [['type' => 'success', 'text' => 'Пароль пользователя «'.$user->getName() .'» сохранен']];
 
         return redirect()->back()->with(compact('flashMessages'));

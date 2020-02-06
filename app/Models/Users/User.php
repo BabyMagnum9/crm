@@ -60,6 +60,10 @@ use Illuminate\Notifications\Notifiable;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Users\User filter($frd)
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Users\UserLog[] $logs
  * @property-read int|null $logs_count
+ * @property string $image_url
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Users\Phone[] $phones
+ * @property-read int|null $phones_count
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Users\User whereImageUrl($value)
  */
 class User extends Authenticatable
 {
@@ -87,6 +91,7 @@ class User extends Authenticatable
         'phone',
         'age',
         'date_birth',
+        'image_url',
     ];
 
     public function setName(string $name, int $typeId = 0): void
@@ -259,6 +264,13 @@ class User extends Authenticatable
     }
 
     /**
+     * @return string
+     */
+    public function getUrl():string {
+        return route('users.show',$this);
+    }
+
+    /**
      * @return HasMany
      */
     public function logs():HasMany{
@@ -310,5 +322,23 @@ class User extends Authenticatable
         $this->phones()->sync($phonesIds);
         return $phonesIds;
     }
+
+    /**
+     * @return string
+     */
+    public function getImageUrl(): string
+    {
+        return $this->image_url;
+    }
+
+    /**
+     * @param string $image_url
+     */
+    public function setImageUrl(string $image_url): void
+    {
+        $this->image_url = $image_url;
+    }
+
+
 
 }

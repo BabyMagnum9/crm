@@ -2,12 +2,13 @@
 
 namespace App\Listeners\Users\Auth;
 
-use App\Events\Users\Auth\SignIn;
+use App\Events\Users\Auth\ChangePassword;
+use App\Models\Users\User;
 use App\Models\Users\UserLog;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 
-class WriteSignInToLog
+class WriteChangePassword
 {
     /**
      * Create the event listener.
@@ -18,19 +19,18 @@ class WriteSignInToLog
     {
         //
     }
-
     /**
      * Handle the event.
      *
-     * @param  SignIn  $event
+     * @param  ChangePassword  $event
      * @return void
      */
-    public function handle(SignIn $event)
+    public function handle(ChangePassword $event)
     {
         $user = $event->getUser();
         $log = new UserLog();
-        $log->{'user_id'} = $user->getKey();
-        $log->{'event_id'} = 1;
+        $log->{'user_id'} = \Auth::id();
+        $log->{'event_id'} = 5;
         $log->{'targetable_id'} = $user->getKey();
         $log->{'targetable_type'} = get_class($user);
         $log->{'ip'} = ip2long(request()->getClientIp());

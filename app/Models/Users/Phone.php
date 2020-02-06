@@ -25,6 +25,7 @@ use Propaganistas\LaravelPhone\PhoneNumber;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Users\Phone whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Users\Phone whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Users\Phone whereUpdatedAt($value)
+ * @property-write mixed $first_name
  */
 class Phone extends Model
 {

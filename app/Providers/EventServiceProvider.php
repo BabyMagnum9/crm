@@ -20,7 +20,10 @@ class EventServiceProvider extends ServiceProvider
         ],
         'App\Events\Users\Auth\SignIn'=>[
             'App\Listeners\Users\Auth\WriteSignInToLog',
-        ]
+        ],
+        'App\Events\Users\Auth\ChangePassword'=>[
+            'App\Listeners\Users\Auth\WriteChangePassword',
+        ],
     ];
 
     /**

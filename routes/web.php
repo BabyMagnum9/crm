@@ -40,5 +40,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::resource('users', 'UserController');
     Route::resource('roles', 'RoleController');
     Route::resource('permissions', 'PermissionController');
+
+    Route::get('users/{user}/logs','UserController@logs')->name('users.logs');
 });
 

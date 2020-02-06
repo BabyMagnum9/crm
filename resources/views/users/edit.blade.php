@@ -6,11 +6,7 @@
 
     <div class="row justify-content-center">
         <div class="col-8 col-lg-4">
-
-
             @include('users._form')
-
-
         </div>
 
         <div class="col-lg-4">
@@ -18,6 +14,10 @@
         </div>
         <div class="col-lg-4">
             @include('users.show._emails')
+        </div>
+        <div class="col-lg-4">
+            {{ Form::model($user,['url'=>route('users.update',$user),'method'=>'PATCH','enctype'=>"multipart/form-data",]) }}
+
         </div>
 
     </div>

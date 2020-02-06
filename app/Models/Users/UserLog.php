@@ -48,7 +48,11 @@ class UserLog extends Model
     ];
 
     protected $events = [
-        1 =>'Пользователь вошел',
+        1 =>'Вошел в систему',
+        2 => 'Изменил данные пользователя',
+        3 => 'Установил новый пароль пользователю',
+        4 => 'Создал пользователя',
+        5 => 'Изменил пароль пользователя',
     ];
 
     protected $casts = [
@@ -71,10 +75,26 @@ class UserLog extends Model
     }
 
     /**
+     * @param int|null $userId
      * @return string
      */
-    public function getName():string {
-        return $this->events[$this->getEventId()] .' <a href="'.$this->getTargetable()->getUrl().'">'.$this->getTargetable()->getName().'</a>';
+    public function getName(int $userId = null):string {
+//        return $this->events[$this->getEventId()] .' <a href="'.$this->getTargetable()->getur.'">'.$this->getTargetable()->getName().'</a>';
+        $author = null;
+
+        if ($userId !== $this->getUserId()) {
+            $author = $this->getUser()->getName();
+        }
+
+        $targetable = null;
+        if (null !== $this->getTargetable() && $this->getTargetable()->getKey() !== $userId) {
+            $targetable = ' <a href="' . $this->getTargetable()->getUrl() . '">' . $this->getTargetable()->getName() . '</a>';
+        } elseif (null === $this->getTargetable()
+        ) {
+            $targetable = " <span class='text-danger'>ПОЛЬЗОВАТЕЛЬ НЕ НАЙДЕН</span>";
+        }
+
+        return $author . ' ' . $this->events[$this->getEventId()] . $targetable;
     }
 
     /**
